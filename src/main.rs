@@ -158,7 +158,7 @@ fn trace_and_plot(
     let mut color = ray_color;
     loop {
         let new_color = plot(position, normal, magnitude, window_vec, &color, world, d);
-        magnitude += 1.0;
+        magnitude += 2.0;
 
         // Handle edge of the screen
         if new_color.is_none() {
@@ -198,6 +198,9 @@ fn main() {
     let bloom_shader = rl.load_shader(&thread, None, Some("./bloom.fs")).unwrap();
     let bloom_surface = rl.load_render_texture(&thread, 800, 600).unwrap();
 
+    // Last light position
+    let mut last_light_position = Vector2::new(-1.0, -1.0);
+
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
 
@@ -217,7 +220,8 @@ fn main() {
         }
 
         // Open a shader context
-        {
+        // Skip rendering if the light didn't move
+        if world.light.position != last_light_position {
             unsafe {
                 raylib::ffi::BeginTextureMode(*bloom_surface);
             }
@@ -248,6 +252,7 @@ fn main() {
                 raylib::ffi::EndTextureMode();
             }
         }
+        last_light_position = world.light.position;
 
         // Render via the shader
         {
