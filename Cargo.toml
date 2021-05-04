@@ -13,5 +13,3 @@ serde = { version = "1.0.125", features = ["derive"] }
 serde_json = "1.0.64"
 clap = "2.33.3"
 failure = "0.1.8"
-line_intersection = "0.4.0"
-geo = "0.18.0"
